@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #EEF0E6;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(31,53,41,0.07) 1px, transparent 0);
+  background-size: 22px 22px;
+  color: #1F3529;
+}
+
+::selection {
+  background: #E0A233;
+  color: #1F3529;
+}
+
+.torn-edge {
+  position: relative;
+}
+
+.torn-edge::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background-image: linear-gradient(135deg, #EEF0E6 50%, transparent 50%),
+    linear-gradient(45deg, #EEF0E6 50%, transparent 50%);
+  background-size: 12px 12px;
+  background-position: 0 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid #E0A233;
+  outline-offset: 2px;
+}
