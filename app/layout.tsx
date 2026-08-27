@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
           <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 py-8">{children}</main>
           <footer className="text-center text-sm text-ink-soft/70 py-8 font-mono">
-            Daily Prompt — a new question every day.
+            🍁 Daily Prompt — a new question every day.
           </footer>
         </AuthProvider>
       </body>

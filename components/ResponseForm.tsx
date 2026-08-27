@@ -73,8 +73,8 @@ export default function ResponseForm({
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={parentId ? "Write a reply…" : "Write your response…"}
-        rows={compact ? 3 : 4}
-        className="w-full rounded-xl border border-ink/15 bg-white/70 p-3 text-sm text-ink placeholder:text-ink-soft/50 focus:bg-white outline-none resize-none"
+        rows={compact ? 4 : 7}
+        className="w-full rounded-xl border border-ink/15 bg-white/70 p-3 text-sm text-ink placeholder:text-ink-soft/50 focus:bg-white outline-none resize-y min-h-[7rem]"
       />
       <div className="flex items-center justify-between mt-2">
         <span className={`font-mono text-xs ${overLimit ? "text-rust" : "text-ink-soft/60"}`}>

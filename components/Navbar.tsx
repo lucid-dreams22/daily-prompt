@@ -9,12 +9,15 @@ export default function Navbar() {
   return (
     <header className="border-b border-ink/10 bg-paper/80 backdrop-blur sticky top-0 z-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="font-display italic text-2xl font-semibold text-ink">
-          Daily Prompt
+        <Link href="/" className="font-display italic text-2xl font-semibold text-ink flex items-center gap-1.5">
+          <span aria-hidden>🍂</span> Daily Prompt
         </Link>
         <nav className="flex items-center gap-5 text-sm font-medium">
           <Link href="/archive" className="hover:text-gold transition-colors">
             Archive
+          </Link>
+          <Link href="/vote" className="hover:text-gold transition-colors">
+            Vote
           </Link>
           {!loading && user && (
             <Link href="/saved" className="hover:text-gold transition-colors">

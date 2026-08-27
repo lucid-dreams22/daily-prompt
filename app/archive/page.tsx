@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { archiveDates, todayStr } from "@/lib/prompts";
-export const dynamic = "force-dynamic"; 
+
+export const dynamic = "force-dynamic";
+
 export default function ArchivePage() {
   const dates = archiveDates(120);
   const today = todayStr();

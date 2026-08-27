@@ -5,14 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: "#EEF0E6",
-        "paper-dim": "#E3E6D8",
-        ink: "#1F3529",
-        "ink-soft": "#3C5245",
-        gold: "#E0A233",
-        rust: "#BE5233",
-        teal: "#276B6B",
-        indigo: "#3E4A8C",
+        paper: "#FBF3E7",
+        "paper-dim": "#F3E4CE",
+        ink: "#4A3628",
+        "ink-soft": "#8A7160",
+        gold: "#E2963B",
+        rust: "#C1502E",
+        teal: "#6B7A52",
+        indigo: "#6B3F55",
       },
       fontFamily: {
         display: ["var(--font-fraunces)", "serif"],

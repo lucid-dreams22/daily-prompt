@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CATEGORY_MAP, getPromptForDate, todayStr, type CategorySlug } from "@/lib/prompts";
+import { CATEGORY_MAP, todayStr, type CategorySlug } from "@/lib/prompts";
+import { getEffectivePrompt } from "@/lib/promptOverrides";
 import SavePromptButton from "@/components/SavePromptButton";
 import PromptInteractive from "@/components/PromptInteractive";
+
+export const dynamic = "force-dynamic";
 
 const VALID_SLUGS = ["reflect", "imagine", "discover"];
 
@@ -11,8 +14,8 @@ const TEXT_COLOR: Record<string, string> = {
   teal: "text-teal",
   indigo: "text-indigo",
 };
-export const dynamic = "force-dynamic"; 
-export default function PromptPage({
+
+export default async function PromptPage({
   params,
 }: {
   params: { category: string; date: string };
@@ -23,10 +26,11 @@ export default function PromptPage({
   }
   const slug = category as CategorySlug;
   const cat = CATEGORY_MAP[slug];
-  const prompt = getPromptForDate(slug, date);
   const isToday = date === todayStr();
   const isFuture = date > todayStr();
   if (isFuture) notFound();
+
+  const prompt = await getEffectivePrompt(slug, date);
 
   const formatted = new Date(date + "T00:00:00Z").toLocaleDateString("en-US", {
     weekday: "long",

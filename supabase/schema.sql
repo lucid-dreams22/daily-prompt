@@ -55,7 +55,7 @@ create table if not exists public.responses (
   parent_id uuid references public.responses(id) on delete cascade,
   content text not null check (
     char_length(trim(content)) > 0
-    and array_length(regexp_split_to_array(trim(content), '\s+'), 1) <= 200
+    and array_length(regexp_split_to_array(trim(content), '\s+'), 1) <= 250
   ),
   created_at timestamptz not null default now()
 );
@@ -85,8 +85,73 @@ create policy "Users can edit their own responses"
   using (auth.uid() = user_id);
 
 -- ────────────────────────────────────────────────────────────
--- Saved prompts (bookmarks) — signed-in users only.
+-- Prompt suggestions & votes — users propose a prompt for a future day
+-- in a given category, and vote on their favorite. The top-voted
+-- suggestion for a date (if any) is used INSTEAD of the default
+-- rotating bank prompt for that day. See getPromptOverride() in lib/prompts.ts.
 -- ────────────────────────────────────────────────────────────
+create table if not exists public.prompt_suggestions (
+  id uuid primary key default gen_random_uuid(),
+  category_slug text not null check (category_slug in ('reflect', 'imagine', 'discover')),
+  prompt_date date not null,
+  text text not null check (char_length(trim(text)) between 5 and 200),
+  created_by uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists prompt_suggestions_lookup_idx
+  on public.prompt_suggestions (category_slug, prompt_date);
+
+alter table public.prompt_suggestions enable row level security;
+
+create policy "Suggestions are viewable by everyone"
+  on public.prompt_suggestions for select
+  using (true);
+
+create policy "Signed-in users can suggest prompts"
+  on public.prompt_suggestions for insert
+  with check (auth.uid() = created_by);
+
+create policy "Users can delete their own suggestions"
+  on public.prompt_suggestions for delete
+  using (auth.uid() = created_by);
+
+create table if not exists public.prompt_votes (
+  id uuid primary key default gen_random_uuid(),
+  suggestion_id uuid not null references public.prompt_suggestions(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (suggestion_id, user_id)
+);
+
+alter table public.prompt_votes enable row level security;
+
+create policy "Votes are viewable by everyone"
+  on public.prompt_votes for select
+  using (true);
+
+create policy "Signed-in users can vote"
+  on public.prompt_votes for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can remove their own vote"
+  on public.prompt_votes for delete
+  using (auth.uid() = user_id);
+
+-- A view that returns each date/category's winning (most-voted) suggestion,
+-- so the app can ask "is there a community pick for this day?" in one query.
+create or replace view public.winning_suggestions as
+select distinct on (s.category_slug, s.prompt_date)
+  s.id,
+  s.category_slug,
+  s.prompt_date,
+  s.text,
+  count(v.id) as vote_count
+from public.prompt_suggestions s
+left join public.prompt_votes v on v.suggestion_id = s.id
+group by s.id, s.category_slug, s.prompt_date, s.text
+order by s.category_slug, s.prompt_date, count(v.id) desc, s.created_at asc;
+
 create table if not exists public.saved_prompts (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
