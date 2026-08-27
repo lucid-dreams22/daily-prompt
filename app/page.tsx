@@ -1,6 +1,6 @@
 import PromptCard from "@/components/PromptCard";
 import { CATEGORIES, getPromptForDate, todayStr } from "@/lib/prompts";
-
+export const dynamic = "force-dynamic";
 export default function HomePage() {
   const date = todayStr();
   const formatted = new Date(date + "T00:00:00Z").toLocaleDateString("en-US", {

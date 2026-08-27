@@ -11,7 +11,7 @@ const TEXT_COLOR: Record<string, string> = {
   teal: "text-teal",
   indigo: "text-indigo",
 };
-
+export const dynamic = "force-dynamic"; 
 export default function PromptPage({
   params,
 }: {
