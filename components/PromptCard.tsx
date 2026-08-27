@@ -20,14 +20,13 @@ export default function PromptCard({
   return (
     <Link
       href={`/prompt/${category.slug}/${date}`}
-      className={`tilt-hover group block bg-white/70 hover:bg-white rounded-2xl border-t-4 ${c.border} shadow-card p-6 transition-all duration-200`}
+      className={`group block bg-white/70 hover:bg-white rounded-2xl border-t-4 ${c.border} shadow-card p-6 transition-colors`}
     >
-      <div className="flex items-center justify-between mb-4">
-        <span className={`font-mono text-xs uppercase tracking-widest ${c.text} flex items-center gap-1.5`}>
-          <span className={`w-2 h-2 rounded-full ${c.bg} sticker-dot`} />
+      <div className="flex items-center gap-2 mb-4">
+        <span className={`w-1.5 h-1.5 rounded-full ${c.bg}`} />
+        <span className={`font-mono text-xs uppercase tracking-widest ${c.text}`}>
           {category.name}
         </span>
-        <span className="text-lg select-none">{category.emoji}</span>
       </div>
       <p className="font-display text-xl leading-snug text-ink">{prompt}</p>
       <p className="mt-4 text-sm text-ink-soft group-hover:underline">

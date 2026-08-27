@@ -85,22 +85,22 @@ create policy "Users can edit their own responses"
   using (auth.uid() = user_id);
 
 -- ────────────────────────────────────────────────────────────
--- Prompt suggestions & votes — users propose a prompt for a future day
--- in a given category, and vote on their favorite. The top-voted
--- suggestion for a date (if any) is used INSTEAD of the default
--- rotating bank prompt for that day. See getPromptOverride() in lib/prompts.ts.
+-- Prompt suggestions & votes — users propose a prompt for a category
+-- (not tied to a specific date). Once a suggestion reaches 10 votes,
+-- it's automatically locked in as the very next day's prompt for that
+-- category the next time the site is visited. See lib/promptOverrides.ts.
 -- ────────────────────────────────────────────────────────────
 create table if not exists public.prompt_suggestions (
   id uuid primary key default gen_random_uuid(),
   category_slug text not null check (category_slug in ('reflect', 'imagine', 'discover')),
-  prompt_date date not null,
   text text not null check (char_length(trim(text)) between 5 and 200),
   created_by uuid not null references auth.users(id) on delete cascade,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  used_for_date date -- null until it's been promoted to an actual day
 );
 
 create index if not exists prompt_suggestions_lookup_idx
-  on public.prompt_suggestions (category_slug, prompt_date);
+  on public.prompt_suggestions (category_slug, used_for_date);
 
 alter table public.prompt_suggestions enable row level security;
 
@@ -112,9 +112,16 @@ create policy "Signed-in users can suggest prompts"
   on public.prompt_suggestions for insert
   with check (auth.uid() = created_by);
 
-create policy "Users can delete their own suggestions"
+create policy "Users can delete their own unused suggestions"
   on public.prompt_suggestions for delete
-  using (auth.uid() = created_by);
+  using (auth.uid() = created_by and used_for_date is null);
+
+-- Anyone signed in is allowed to flip used_for_date from null to a date —
+-- this is how the app "promotes" a winning suggestion when someone visits
+-- the site. It can never be changed once already set (no un-promoting).
+create policy "Signed-in users can promote a suggestion to a date"
+  on public.prompt_suggestions for update
+  using (auth.uid() is not null and used_for_date is null);
 
 create table if not exists public.prompt_votes (
   id uuid primary key default gen_random_uuid(),
@@ -138,19 +145,20 @@ create policy "Users can remove their own vote"
   on public.prompt_votes for delete
   using (auth.uid() = user_id);
 
--- A view that returns each date/category's winning (most-voted) suggestion,
--- so the app can ask "is there a community pick for this day?" in one query.
-create or replace view public.winning_suggestions as
-select distinct on (s.category_slug, s.prompt_date)
+-- Vote counts per suggestion, used both to rank the vote page and to find
+-- the winning (>=10 votes, not yet used) suggestion for a category.
+create or replace view public.suggestion_votes as
+select
   s.id,
   s.category_slug,
-  s.prompt_date,
   s.text,
+  s.used_for_date,
+  s.created_at,
   count(v.id) as vote_count
 from public.prompt_suggestions s
 left join public.prompt_votes v on v.suggestion_id = s.id
-group by s.id, s.category_slug, s.prompt_date, s.text
-order by s.category_slug, s.prompt_date, count(v.id) desc, s.created_at asc;
+group by s.id, s.category_slug, s.text, s.used_for_date, s.created_at;
+
 
 create table if not exists public.saved_prompts (
   id uuid primary key default gen_random_uuid(),

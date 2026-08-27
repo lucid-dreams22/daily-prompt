@@ -9,7 +9,6 @@ export interface Category {
   name: string;
   tagline: string;
   color: string; // tailwind color token name
-  emoji: string;
 }
 
 export const CATEGORIES: Category[] = [
@@ -18,21 +17,18 @@ export const CATEGORIES: Category[] = [
     name: "Reflect",
     tagline: "A question about your own life",
     color: "rust",
-    emoji: "🍂",
   },
   {
     slug: "imagine",
     name: "Imagine",
     tagline: "A hypothetical worth sitting with",
     color: "teal",
-    emoji: "🌰",
   },
   {
     slug: "discover",
     name: "Discover",
     tagline: "A question about the wider world",
     color: "indigo",
-    emoji: "🍄",
   },
 ];
 

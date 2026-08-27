@@ -8,24 +8,12 @@ html {
 
 body {
   background-color: #FBF3E7;
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(74,54,40,0.08) 1px, transparent 0);
-  background-size: 20px 20px;
   color: #4A3628;
 }
 
 ::selection {
   background: #E2963B;
   color: #FBF3E7;
-}
-
-/* Hand-tilted "pinned note" feel on hover, used sparingly */
-.tilt-hover:hover {
-  transform: rotate(-0.6deg) translateY(-2px);
-}
-
-.sticker-dot {
-  box-shadow: 0 0 0 3px rgba(251,243,231,0.9), 0 0 0 4px rgba(74,54,40,0.15);
 }
 
 .torn-edge {
