@@ -2,6 +2,21 @@ import PromptCard from "@/components/PromptCard";
 import { CATEGORIES, todayStr } from "@/lib/prompts";
 import { getEffectivePrompts } from "@/lib/promptOverrides";
 
+import type { AppProps } from 'next/app';
+import { Analytics } from '@vercel/analytics/next';
+ 
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <>
+      <Component {...pageProps} />
+      <Analytics />
+    </>
+  );
+}
+ 
+export default MyApp;
+
+
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
