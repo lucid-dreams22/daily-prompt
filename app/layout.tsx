@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/AuthProvider";
 import Navbar from "@/components/Navbar";
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Daily Prompt — a new question every day.
           </footer>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
